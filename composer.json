@@ -1,0 +1,22 @@
+{
+    "name": "strikewood/woocommerce-first-atlantic-commerce",
+    "description": "First Atlantic Commerce gateway extension for WooCommerce",
+    "keywords": [
+        "first atlantic commerce",
+        "payment processing",
+        "woocommerce",
+        "wordpress"
+    ],
+    "homepage": "https://github.com/strikewood/woocommerce-first-atlantic-commerce",
+    "license": "MIT",
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/strikewood/soap-first-atlantic-commerce-api.git"
+        }
+    ],
+    "require": {
+        "php": ">=5.6",
+        "strikewood/soap-first-atlantic-commerce-api": "dev-master"
+    }
+}
