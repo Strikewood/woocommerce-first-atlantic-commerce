@@ -9,14 +9,20 @@
     ],
     "homepage": "https://github.com/strikewood/woocommerce-first-atlantic-commerce",
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Jan Pingel",
+            "email": "jan@strikewood.com"
+        }
+    ],
     "repositories": [
         {
             "type": "git",
-            "url": "https://github.com/strikewood/soap-first-atlantic-commerce-api.git"
+            "url": "https://github.com/strikewood/omnipay-first-atlantic-commerce.git"
         }
     ],
     "require": {
         "php": ">=5.6",
-        "strikewood/soap-first-atlantic-commerce-api": "dev-master"
+        "strikewood/omnipay-first-atlantic-commerce": "dev-master"
     }
 }
