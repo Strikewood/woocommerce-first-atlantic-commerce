@@ -1,4 +1,6 @@
 WooCommerce First Atlantic Commerce Gateway
 ===========================================
 
-First Atlantic Commerce gateway extension for WooCommerce
+**First Atlantic Commerce gateway extension for WooCommerce**
+
+[![Build Status](https://travis-ci.org/Strikewood/woocommerce-first-atlantic-commerce.png?branch=master)](https://travis-ci.org/Strikewood/woocommerce-first-atlantic-commerce) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Strikewood/woocommerce-first-atlantic-commerce/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Strikewood/woocommerce-first-atlantic-commerce/?branch=master) [![Latest Stable Version](https://poser.pugx.org/strikewood/woocommerce-first-atlantic-commerce/v/stable.svg)](https://packagist.org/packages/strikewood/woocommerce-first-atlantic-commerce) [![Latest Unstable Version](https://poser.pugx.org/strikewood/woocommerce-first-atlantic-commerce/v/unstable.svg)](https://packagist.org/packages/strikewood/woocommerce-first-atlantic-commerce) [![License](https://poser.pugx.org/strikewood/woocommerce-first-atlantic-commerce/license.svg)](https://packagist.org/packages/strikewood/woocommerce-first-atlantic-commerce) [![Total Downloads](https://poser.pugx.org/strikewood/woocommerce-first-atlantic-commerce/downloads.svg)](https://packagist.org/packages/strikewood/woocommerce-first-atlantic-commerce) 
