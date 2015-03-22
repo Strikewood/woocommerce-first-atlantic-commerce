@@ -114,13 +114,13 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
         $is_available = parent::is_available();
 
         // Only allow unencrypted connections when testing
-        if (!is_ssl() and !$this->testmode)
+        if (!is_ssl() && !$this->testmode)
         {
             $is_available = false;
         }
 
         // Required fields check
-        if (!$this->merchant_id or !$this->merchant_password)
+        if (!$this->merchant_id || !$this->merchant_password)
         {
             $is_available = false;
         }
@@ -222,12 +222,59 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
     /**
      * Output payment fields
      *
-     * @return      void
+     * @return void
      */
-    public function payment_fields() {
-
+    public function payment_fields()
+    {
         // Default credit card form
         $this->credit_card_form();
+    }
+
+    /**
+     * Validate form fields
+     *
+     * @return bool
+     */
+    public function validate_fields()
+    {
+        $validated = true;
+
+        if ( empty($_POST['fac-card-number']) )
+        {
+            wc_add_notice( $this->get_validation_error( __('Card Number', 'woocommerce-gateway-fac'), $_POST['fac-card-number'] ), 'error' );
+            $validated = false;
+        }
+        if ( empty($_POST['fac-card-expiry']) )
+        {
+            wc_add_notice( $this->get_validation_error( __('Card Expiry', 'woocommerce-gateway-fac'), $_POST['fac-card-number'] ), 'error' );
+            $validated = false;
+        }
+        if ( empty($_POST['fac-card-cvc']) )
+        {
+            wc_add_notice( $this->get_validation_error( __('Card Code', 'woocommerce-gateway-fac'), $_POST['fac-card-number'] ), 'error' );
+            $validated = false;
+        }
+
+        return $validated;
+    }
+
+    /**
+     * Get error message for form fields
+     *
+     * @param string $field
+     * @param string $type
+     * @return string
+     */
+    protected function get_validation_error($field, $type = 'undefined')
+    {
+        if ( $type === 'invalid' )
+        {
+            return sprintf( __( 'Please enter a valid %s.', 'woocommerce-gateway-fac' ), "<strong>$field</strong>" );
+        }
+        else
+        {
+            return sprintf( __( '%s is a required field.', 'woocommerce-gateway-fac' ), "<strong>$field</strong>" );
+        }
     }
 
     /**
@@ -239,14 +286,10 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
      */
     public function process_payment($order_id)
     {
-        $order = wc_get_order($order_id);
+        $order = new WC_Order($order_id);
 
         $transaction = $order->get_transaction_id();
         $captured    = get_post_meta($order_id, '_fac_captured', true);
-
-        $card_number = isset($_POST['fac-card-number']) ? str_replace( [' ', '-'], '', wc_clean($_POST['fac-card-number']) ) : '';
-        $card_cvv    = isset($_POST['fac-card-cvc']) ? wc_clean($_POST['fac-card-cvc']) : '';
-        $card_expiry = isset($_POST['fac-card-expiry']) ? preg_split('/\s?\/\s?/', wc_clean($_POST['fac-card-expiry']), 2) : '';
 
         try
         {
@@ -254,9 +297,22 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
 
             $data = [
                 'transactionId' => $order->get_order_number(),
-                'amount'        => $order->get_total(),
-                'currency'      => $order->order_currency,
-                'card'          => [
+                'amount'        => $this->get_order_total(),
+                'currency'      => $order->order_currency
+            ];
+
+            // Already authorized transactions should be captured
+            if ( $transaction && !$captured )
+            {
+                $response = $gateway->capture($data)->send();
+            }
+            else
+            {
+                $card_number = str_replace( [' ', '-'], '', wc_clean($_POST['fac-card-number']) );
+                $card_cvv    = wc_clean($_POST['fac-card-cvc']);
+                $card_expiry = preg_split('/\s?\/\s?/', wc_clean($_POST['fac-card-expiry']), 2);
+
+                $data['card'] = [
                     'firstName'       => $order->billing_first_name,
                     'lastName'        => $order->billing_last_name,
                     'number'          => $card_number,
@@ -270,16 +326,8 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
                     'billingState'    => $order->billing_state,
                     'billingCountry'  => $order->billing_country,
                     'email'           => $order->billing_email
-                ]
-            ];
+                ];
 
-            // Already authorized transactions should be captured
-            if ($transaction and !$captured)
-            {
-                $response = $gateway->capture($data)->send();
-            }
-            else
-            {
                 // Capture in one pass if enabled, otherwise authorize
                 if ($this->capture)
                 {
@@ -293,10 +341,10 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
 
             if ( $response->isSuccessful() )
             {
-                $reference = $response->getReference();
+                $reference = $response->getTransactionReference();
 
                 // Captured transaction
-                if ( ($transaction and !$captured) or (!$transaction and $this->capture) )
+                if ( ($transaction && !$captured) || (!$transaction && $this->capture) )
                 {
                     // Store captured
                     update_post_meta($order_id, '_fac_captured', true);
@@ -357,7 +405,7 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
      */
     public function can_refund_order($order)
     {
-        return $order and $order->payment_method == 'fac' and $order->get_transaction_id();
+        return $order && $order->payment_method == 'fac' && $order->get_transaction_id();
     }
 
     /**
