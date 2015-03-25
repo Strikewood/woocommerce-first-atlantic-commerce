@@ -2,7 +2,7 @@
 /*
  * Plugin Name: WooCommerce First Atlantic Commerce Gateway
  * Plugin URI:  https://github.com/Strikewood/woocommerce-first-atlantic-commerce
- * Description: This is a short description of what the plugin does. It's displayed in the WordPress dashboard.
+ * Description: First Atlantic Commerce gateway extension for WooCommerce.
  * Version:     0.1
  * Author:      Strikewood Studios
  * Author URI:  http://strikewood.com/
