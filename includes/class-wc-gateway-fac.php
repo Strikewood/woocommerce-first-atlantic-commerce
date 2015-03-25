@@ -387,23 +387,19 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
         {
             $backend_message  = 'Transaction Failed: '. $e->getCode() .' – '. $e->getMessage();
 
-
             $this->log($message);
+            $order->add_order_note( __($message, 'woocommerce-gateway-fac') );
 
             // Friendly declined message
             if ( in_array( $e->getCode(), [2, 3, 4, 35, 38, 39] ) )
             {
                 $message = __('Unfortunately your order cannot be processed as the originating bank/merchant has declined your transaction.', 'woocommerce') .' '. __('Please attempt your purchase again.', 'woocommerce');
-
-                $order->add_order_note( __($message, 'woocommerce-gateway-fac') );
             }
 
             // Friendly error message
             else
             {
                 $message = __('Unfortunately your order cannot be processed as an error has occured.', 'woocommerce') .' '. __('Please attempt your purchase again.', 'woocommerce');
-
-                $order->add_order_note( __($message, 'woocommerce-gateway-fac') );
             }
 
             wc_add_notice($message, 'error');
@@ -488,5 +484,4 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
             return new WP_Error( 'fac-refund', __($e->getCode() .' – '.$e->getMessage(), 'woocommerce-gateway-fac') );
         }
     }
-
 }
