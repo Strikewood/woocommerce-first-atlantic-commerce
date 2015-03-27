@@ -385,7 +385,7 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
         }
         catch (\Exception $e)
         {
-            $backend_message  = 'Transaction Failed: '. $e->getCode() .' – '. $e->getMessage();
+            $message = 'Transaction Failed: '. $e->getCode() .' – '. $e->getMessage();
 
             $this->log($message);
             $order->add_order_note( __($message, 'woocommerce-gateway-fac') );
