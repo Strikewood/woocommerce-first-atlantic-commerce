@@ -93,15 +93,12 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
      */
     public function log($message)
     {
-        if ($this->testmode)
+        if ( empty($this->log) )
         {
-            if ( empty($this->log) )
-            {
-                $this->log = new WC_Logger();
-            }
-
-            $this->log->add($this->id, $message);
+            $this->log = new WC_Logger();
         }
+
+        $this->log->add($this->id, $message);
     }
 
     /**
