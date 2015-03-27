@@ -463,7 +463,7 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
 
             if ( $response->isSuccessful() )
             {
-                $order->add_order_note( sprintf( __('Refunded %s - Refund ID: %s', 'woocommerce'), $data['amount'], $response->getTransactionReference() ) );
+                $order->add_order_note( sprintf( __('Refunded %s', 'woocommerce-gateway-fac'), $data['amount'] ) );
                 return true;
             }
             else
