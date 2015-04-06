@@ -288,6 +288,9 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
         $transaction = $order->get_transaction_id();
         $captured    = get_post_meta($order_id, '_fac_captured', true);
 
+        // Skip already captured transactions 
+        if ($captured) return;
+
         try
         {
             $gateway = $this->setup_gateway();
@@ -399,7 +402,10 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
                 $message = __('Unfortunately your order cannot be processed as an error has occured.', 'woocommerce') .' '. __('Please attempt your purchase again.', 'woocommerce');
             }
 
-            wc_add_notice($message, 'error');
+            if ( !is_admin() )
+            {
+                wc_add_notice($message, 'error');
+            }
 
             return;
         }
