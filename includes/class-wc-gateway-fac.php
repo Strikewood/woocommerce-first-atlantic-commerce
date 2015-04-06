@@ -275,6 +275,18 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
     }
 
     /**
+     * Can the order be processed?
+     *
+     * @param WC_Order $order
+     *
+     * @return bool
+     */
+    public function can_process_order($order)
+    {
+        return $order && $order->payment_method == 'fac';
+    }
+
+    /**
      * Process the payment and return the result
      *
      * @param int $order_id
@@ -285,10 +297,12 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
     {
         $order = new WC_Order($order_id);
 
+        if ( !$this->can_process_order($order) ) return;
+
         $transaction = $order->get_transaction_id();
         $captured    = get_post_meta($order_id, '_fac_captured', true);
 
-        // Skip already captured transactions 
+        // Skip already captured transactions
         if ($captured) return;
 
         try
