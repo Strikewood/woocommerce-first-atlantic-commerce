@@ -416,7 +416,7 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
                 $message = __('Unfortunately your order cannot be processed as an error has occured.', 'woocommerce') .' '. __('Please attempt your purchase again.', 'woocommerce');
             }
 
-            if ( !is_admin() )
+            if ( !is_admin() || ( defined('DOING_AJAX') && DOING_AJAX ) )
             {
                 wc_add_notice($message, 'error');
             }
