@@ -469,7 +469,7 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
 
             $data = [
                 'transactionId' => $order->get_order_number(),
-                'amount'        => $order->get_total()
+                'amount'        => $amount
             ];
 
             if ($captured)
