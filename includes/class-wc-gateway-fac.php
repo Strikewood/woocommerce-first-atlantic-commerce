@@ -46,7 +46,7 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
         $this->enabled           = $this->get_option('enabled');
         $this->testmode          = $this->get_option('testmode') === "yes" ? true : false;
         $this->capture           = $this->get_option('capture', "yes") === "yes" ? true : false;
-        //$this->saved_cards       = $this->get_option('saved_cards') === "yes" ? true : false;
+        $this->saved_cards       = $this->get_option('saved_cards') === "yes" ? true : false;
         $this->merchant_id       = $this->testmode ? $this->get_option('test_merchant_id') : $this->get_option('merchant_id');
         $this->merchant_password = $this->testmode ? $this->get_option('test_merchant_password') : $this->get_option('merchant_password');
 
@@ -189,7 +189,6 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
                 'description' => __('Whether or not to immediately capture the charge. When unchecked, the charge issues an authorization and will need to be captured later. Uncaptured charges expire in 7 days.', 'woocommerce-gateway-fac'),
                 'default'     => 'yes'
             ],
-            /*
             'saved_cards' => [
                 'title'       => __('Saved cards', 'woocommerce-gateway-fac'),
                 'label'       => __('Enable saved cards', 'woocommerce-gateway-fac'),
@@ -197,7 +196,6 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
                 'description' => __('If enabled, users will be able to pay with a saved card during checkout. Card details are saved on FAC servers, not on your store.', 'woocommerce-gateway-fac'),
                 'default'     => 'no'
             ]
-            */
         ]);
     }
 
@@ -397,7 +395,7 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
             }
             else
             {
-                throw new FacTransactionException( $response->getMessage(), $response->getCode() );
+                throw new \FacTransactionException( $response->getMessage(), $response->getCode() );
             }
         }
         catch (\Omnipay\Common\Exception\OmnipayException $e)
@@ -500,7 +498,7 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
             }
             else
             {
-                throw new FacTransactionException( $response->getMessage(), $response->getCode() );
+                throw new \FacTransactionException( $response->getMessage(), $response->getCode() );
             }
         }
         catch (\Omnipay\Common\Exception\OmnipayException $e)
