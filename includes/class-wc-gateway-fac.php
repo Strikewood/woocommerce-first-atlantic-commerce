@@ -44,9 +44,9 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
         $this->title             = $this->get_option('title');
         $this->description       = $this->get_option('description');
         $this->enabled           = $this->get_option('enabled');
-        $this->testmode          = 'yes' === $this->get_option('testmode', 'no');
+        $this->testmode          = $this->get_option('testmode') === "yes" ? true : false;
         $this->capture           = $this->get_option('capture', "yes") === "yes" ? true : false;
-        //$this->saved_cards       = $this->get_option( 'saved_cards' ) === "yes" ? true : false;
+        //$this->saved_cards       = $this->get_option('saved_cards') === "yes" ? true : false;
         $this->merchant_id       = $this->testmode ? $this->get_option('test_merchant_id') : $this->get_option('merchant_id');
         $this->merchant_password = $this->testmode ? $this->get_option('test_merchant_password') : $this->get_option('merchant_password');
 
@@ -78,7 +78,8 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
         }
 
         // Check if enabled and force SSL is disabled
-        if ( get_option('woocommerce_force_ssl_checkout') == 'no' ) {
+        if ( get_option('woocommerce_force_ssl_checkout') == 'no' )
+        {
             echo '<div class="error"><p>' . sprintf( __( 'First Atlantic Commerce is enabled, but the <a href="%s">force SSL option</a> is disabled; your checkout may not be secure! Please enable SSL and ensure your server has a valid SSL certificate - First Atlantic Commerce will only work in test mode.', 'woocommerce-gateway-fac' ), admin_url( 'admin.php?page=wc-settings&tab=checkout' ) ) . '</p></div>';
             return;
         }
@@ -187,14 +188,16 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
                 'type'        => 'checkbox',
                 'description' => __('Whether or not to immediately capture the charge. When unchecked, the charge issues an authorization and will need to be captured later. Uncaptured charges expire in 7 days.', 'woocommerce-gateway-fac'),
                 'default'     => 'yes'
-            ]/*,
+            ],
+            /*
             'saved_cards' => [
                 'title'       => __('Saved cards', 'woocommerce-gateway-fac'),
                 'label'       => __('Enable saved cards', 'woocommerce-gateway-fac'),
                 'type'        => 'checkbox',
                 'description' => __('If enabled, users will be able to pay with a saved card during checkout. Card details are saved on FAC servers, not on your store.', 'woocommerce-gateway-fac'),
                 'default'     => 'no'
-            ]*/
+            ]
+            */
         ]);
     }
 
@@ -394,18 +397,27 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
             }
             else
             {
-                throw new Exception( $response->getMessage(), $response->getCode() );
+                throw new FacTransactionException( $response->getMessage(), $response->getCode() );
             }
         }
-        catch (\Exception $e)
+        catch (\Omnipay\Common\Exception\OmnipayException $e)
         {
-            $message = 'Transaction Failed: '. $e->getCode() .' – '. $e->getMessage();
+            $error = 'Transaction Failed: ';
 
-            $this->log($message);
-            $order->add_order_note( __($message, 'woocommerce-gateway-fac') );
+            if ( 'FacTransactionException' == get_class($e) )
+            {
+                $error .= $e->getCode() . ' – ' . $e->getMessage();
+            }
+            else
+            {
+                $error .= $e->getMessage();
+            }
+
+            $this->log($error);
+            $order->add_order_note( __($error, 'woocommerce-gateway-fac') );
 
             // Friendly declined message
-            if ( in_array( $e->getCode(), [2, 3, 4, 35, 38, 39] ) )
+            if ( 'FacTransactionException' == get_class($e) && in_array( $e->getCode(), [2, 3, 4, 35, 38, 39] ) )
             {
                 $message = __('Unfortunately your order cannot be processed as the originating bank/merchant has declined your transaction.', 'woocommerce') .' '. __('Please attempt your purchase again.', 'woocommerce');
             }
@@ -488,17 +500,26 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
             }
             else
             {
-                throw new Exception( $response->getMessage(), $response->getCode() );
+                throw new FacTransactionException( $response->getMessage(), $response->getCode() );
             }
         }
-        catch (\Exception $e)
+        catch (\Omnipay\Common\Exception\OmnipayException $e)
         {
-            $message = 'Refund Failed: '. $e->getCode() .' – '. $e->getMessage();
+            $error = 'Refund Failed: ';
 
-            $this->log($message);
-            $order->add_order_note( __($message, 'woocommerce-gateway-fac') );
+            if ( 'FacTransactionException' == get_class($e) )
+            {
+                $error .= $e->getCode() . ' – ' . $e->getMessage();
+            }
+            else
+            {
+                $error .= $e->getMessage();
+            }
 
-            return new WP_Error( 'fac-refund', __($e->getCode() .' – '.$e->getMessage(), 'woocommerce-gateway-fac') );
+            $this->log($error);
+            $order->add_order_note( __($error, 'woocommerce-gateway-fac') );
+
+            return new WP_Error( 'fac-refund', __($error, 'woocommerce-gateway-fac') );
         }
     }
 }

@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce First Atlantic Commerce Gateway
  * Plugin URI:  https://github.com/Strikewood/woocommerce-first-atlantic-commerce
  * Description: First Atlantic Commerce gateway extension for WooCommerce.
- * Version:     0.1.5
+ * Version:     0.2.0
  * Author:      Strikewood Studios
  * Author URI:  http://strikewood.com/
  * License:     MIT
@@ -20,7 +20,8 @@ function woocommerce_init_fac_gateway()
     load_plugin_textdomain('wc-gateway-fac', false, dirname( plugin_basename(__FILE__) ) . '/languages');
 
     // Includes
-    include_once('includes/class-wc-gateway-fac.php');
+    require_once('includes/class-fac-transaction-exception.php');
+    require_once('includes/class-wc-gateway-fac.php');
 
     // Register the gateway in WC
     function woocommerce_register_fac_gateway($methods)
