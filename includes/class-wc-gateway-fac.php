@@ -1,6 +1,8 @@
 <?php
 
 use Omnipay\Omnipay;
+use Omnipay\Common\Exception\InvalidResponseException;
+use Omnipay\Common\Exception\OmnipayException;
 
 if ( !defined('ABSPATH') ) exit;
 
@@ -394,10 +396,10 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
             }
             else
             {
-                throw new Exception( $response->getMessage(), $response->getCode() );
+                throw new InvalidResponseException( $response->getMessage(), $response->getCode() );
             }
         }
-        catch (\Exception $e)
+        catch (OmnipayException $e)
         {
             $message = 'Transaction Failed: '. $e->getCode() .' – '. $e->getMessage();
 
@@ -488,10 +490,10 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
             }
             else
             {
-                throw new Exception( $response->getMessage(), $response->getCode() );
+                throw new InvalidResponseException( $response->getMessage(), $response->getCode() );
             }
         }
-        catch (\Exception $e)
+        catch (OmnipayException $e)
         {
             $message = 'Refund Failed: '. $e->getCode() .' – '. $e->getMessage();
 
