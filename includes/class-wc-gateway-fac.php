@@ -1,6 +1,7 @@
 <?php
 
 use Omnipay\Omnipay;
+use Omnipay\Common\Exception\OmnipayException;
 
 if ( !defined('ABSPATH') ) exit;
 
@@ -398,7 +399,7 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
                 throw new \FacTransactionException( $response->getMessage(), $response->getCode() );
             }
         }
-        catch (\Omnipay\Common\Exception\OmnipayException $e)
+        catch (OmnipayException $e)
         {
             $error = 'Transaction Failed: ';
 
@@ -501,7 +502,7 @@ class WC_Gateway_FirstAtlanticCommerce extends WC_Payment_Gateway
                 throw new \FacTransactionException( $response->getMessage(), $response->getCode() );
             }
         }
-        catch (\Omnipay\Common\Exception\OmnipayException $e)
+        catch (OmnipayException $e)
         {
             $error = 'Refund Failed: ';
 
