@@ -1,0 +1,14 @@
+- .DS_Store
+- .vagrant
+- .gitkeep
+- .env
+- /.git
+- /.gitignore
+- /.scrutinizer.yml
+- /build
+- /builds
+- /test
+- /composer.json
+- /composer.lock
+- /phpunit.xml
+- /bin
